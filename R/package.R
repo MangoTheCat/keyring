@@ -5,4 +5,5 @@
 #'
 #' @docType package
 #' @name keyring
+#' @useDynLib keyring
 NULL
