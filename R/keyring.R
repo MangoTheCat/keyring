@@ -1,4 +1,7 @@
 
+#' @useDynLib keyring
+NULL
+
 #' @export
 
 add_password <- function(service, account, password) {
