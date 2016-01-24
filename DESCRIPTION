@@ -1,11 +1,14 @@
 Package: keyring
 Title: Access the System Keyring from R
 Version: 1.0.0
-Author: Gabor Csardi
+Author: Gabor Csardi, Kevin Sawicki, Cheng Zhao, Paul Betts,
+    Johannes Jörg Schmidt, Peter Dave Hello, Robin Mehner, Machisté N. Quintana
 Maintainer: Gabor Csardi <gcsardi@mango-solutions.com>
+Copyright: GitHub Inc., Mango Solutions
 Description: Modern OSes store passwords, and other confidential information in
     a keyring with a master password. This package allows access to the keyring of
-    the OS from R. It supports Windows, Mac OS X and Linux systems.
+    the OS from R. It supports Windows, Mac OS X and Linux systems. The C++ source
+    code is based on the 'keytar' project: <https://github.com/atom/node-keytar>.
 License: MIT + file LICENSE
 LazyData: true
 URL: https://github.com/mangothecat/keyring
@@ -16,3 +19,4 @@ Imports:
 Suggests:
     testthat
 RoxygenNote: 5.0.1
+Encoding: UTF-8
