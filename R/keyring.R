@@ -93,5 +93,5 @@ find_internet_password <- function(servername, port = 0) {
     is_count(port)
   )
 
-  R_FindInternetPassword(servername, port, protocol)
+  R_FindInternetPassword(servername, port)
 }
