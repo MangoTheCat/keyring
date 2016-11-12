@@ -77,7 +77,7 @@ get_internet_password <- function(servername, account, port = 0) {
 
 delete_internet_password <- function(servername, account, port = 0) {
   stopifnot(
-    is_string(service),
+    is_string(servername),
     is_string(account),
     is_count(port)
   )
