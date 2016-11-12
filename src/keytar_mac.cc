@@ -82,6 +82,123 @@ bool FindPassword(const std::string& service, std::string* password) {
   return true;
 }
 
+// ---------------------------------------------------------------------
+// Internet passwords
+
+bool AddInternetPassword(const std::string& servername,
+			 const std::string& account,
+			 int port,
+			 const std::string& password) {
+
+  OSStatus status = SecKeychainAddInternetPassword
+    (NULL,			// keychain
+     servername.length(),
+     servername.data(),
+     0, NULL,			// securityDomain
+     account.length(),
+     account.data(),
+     0, NULL,			// path
+     port,
+     kSecProtocolTypeAny,
+     kSecAuthenticationTypeAny,
+     password.length(),
+     password.data(),
+     NULL);
+
+  return status == errSecSuccess;
+}
+
+bool GetInternetPassword(const std::string& servername,
+			 const std::string& account,
+			 int port,
+			 std::string* password) {
+
+  void *data;
+  UInt32 length;
+
+  OSStatus status = SecKeychainFindInternetPassword
+    (NULL,			// keychain
+     servername.length(),
+     servername.data(),
+     0, NULL,			// securityDomain
+     account.length(),
+     account.data(),
+     0, NULL,			// path
+     port,
+     kSecProtocolTypeAny,
+     kSecAuthenticationTypeAny,
+     &length,
+     &data,
+     NULL);
+
+  if (status != errSecSuccess)
+    return false;
+
+  *password = std::string(reinterpret_cast<const char*>(data), length);
+  SecKeychainItemFreeContent(NULL, data);
+  return true;
+}
+
+bool DeleteInternetPassword(const std::string& servername,
+			    const std::string& account,
+			    int port) {
+
+  SecKeychainItemRef item;
+
+  OSStatus status = SecKeychainFindInternetPassword
+    (NULL,			// keychain
+     servername.length(),
+     servername.data(),
+     0, NULL,			// securityDomain
+     account.length(),
+     account.data(),
+     0, NULL,			// path
+     port,
+     kSecProtocolTypeAny,
+     kSecAuthenticationTypeAny,
+     NULL,
+     NULL,
+     &item);
+
+  if (status != errSecSuccess)
+    return false;
+
+  status = SecKeychainItemDelete(item);
+  CFRelease(item);
+  return status == errSecSuccess;
+}
+
+bool FindInternetPassword(const std::string& servername,
+			  int port,
+			  std::string* password) {
+
+  SecKeychainItemRef item;
+  void *data;
+  UInt32 length;
+
+  OSStatus status = SecKeychainFindInternetPassword
+    (NULL,			// keychain
+     servername.length(),
+     servername.data(),
+     0, NULL,			// securityDomain
+     0, NULL,			// account
+     0, NULL,			// path
+     port,
+     kSecProtocolTypeAny,
+     kSecAuthenticationTypeAny,
+     &length,
+     &data,
+     &item);
+
+  if (status != errSecSuccess)
+    return false;
+
+  *password = std::string(reinterpret_cast<const char*>(data), length);
+  SecKeychainItemFreeContent(NULL, data);
+  CFRelease(item);
+  return true;
+}
+
 }  // namespace keytar
 
 #endif

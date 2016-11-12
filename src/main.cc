@@ -37,3 +37,46 @@ SEXP R_FindPassword(const std::string& service) {
   if (!result) stop("Cannot find password");
   return Rcpp::wrap(password);
 }
+
+// ---------------------------------------------------------------------
+
+// [[Rcpp::export]]
+SEXP R_AddInternetPassword(const std::string& servername,
+			   const std::string& account,
+			   int port,
+			   const std::string& password) {
+
+  return Rcpp::wrap(keytar::AddInternetPassword(servername, account, port,
+						password));
+}
+
+// [[Rcpp::export]]
+SEXP R_GetInternetPassword(const std::string& servername,
+			   const std::string& account,
+			   int port) {
+
+  std::string password;
+  bool result = keytar::GetInternetPassword(servername, account, port,
+					    &password);
+  if (!result) stop("Cannot find password");
+  return Rcpp::wrap(password);
+}
+
+// [[Rcpp::export]]
+SEXP R_DeleteInternetPassword(const std::string& servername,
+			      const std::string& account,
+			      int port) {
+
+  return Rcpp::wrap(keytar::DeleteInternetPassword(servername, account,
+						   port));
+}
+
+// [[Rcpp::export]]
+SEXP R_FindInternetPassword(const std::string& servername,
+			    int port) {
+
+  std::string password;
+  bool result = keytar::FindInternetPassword(servername, port, &password);
+  if (!result) stop("Cannot find password");
+  return Rcpp::wrap(password);
+}
