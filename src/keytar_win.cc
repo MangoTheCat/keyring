@@ -58,6 +58,60 @@ bool FindPassword(const std::string& service, std::string* password) {
   return true;
 }
 
+bool AddInternetPassword(const std::string& servername,
+			 const std::string& account,
+			 int port, // TODO: ignored
+			 const std::string& password) {
+
+  CREDENTIAL cred = { 0 };
+  cred.Type = CRED_TYPE_GENERIC;
+  cred.TargetName = const_cast<char*>(servername.c_str());
+  cred.CredentialBlobSize = password.size();
+  cred.CredentialBlob = (LPBYTE)(password.data());
+  cred.Persist = CRED_PERSIST_LOCAL_MACHINE;
+  cred.UserName = const_cast<char*>(account.c_str());
+
+  return ::CredWrite(&cred, 0) == TRUE;
+}
+
+bool GetInternetPassword(const std::string& servername,
+			 const std::string& account,
+			 int port,
+			 std::string* password) {
+
+  CREDENTIAL* cred;
+  if (::CredRead(servername.c_str(), CRED_TYPE_GENERIC, 0, &cred) == FALSE)
+    return false;
+
+  *password = std::string(reinterpret_cast<char*>(cred->CredentialBlob),
+                          cred->CredentialBlobSize);
+  ::CredFree(cred);
+  return true;
+}
+
+bool DeleteInternetPassword(const std::string& servername,
+			    const std::string& account,
+			    int port) {
+  return ::CredDelete(servername, CRED_TYPE_GENERIC, 0) == TRUE;
+}
+
+bool FindInternetPassword(const std::string& servername,
+			  int port,
+			  std::string* password) {
+
+  std::string filter = servername + "*";
+
+  DWORD count;
+  CREDENTIAL** creds;
+  if (::CredEnumerate(filter.c_str(), 0, &count, &creds) == FALSE)
+    return false;
+
+  *password = std::string(reinterpret_cast<char*>(creds[0]->CredentialBlob),
+                          creds[0]->CredentialBlobSize);
+  ::CredFree(creds);
+  return true;
+}
+
 }  // namespace keytar
 
 #endif
