@@ -6,6 +6,8 @@
 #include <windows.h>
 #include <wincred.h>
 
+#include <iostream>
+
 namespace keytar {
 
 bool AddPassword(const std::string& service,
@@ -108,6 +110,9 @@ bool FindInternetPassword(const std::string& servername,
 
   *password = std::string(reinterpret_cast<char*>(creds[0]->CredentialBlob),
                           creds[0]->CredentialBlobSize);
+
+  std string target = creds[0]->TargetName;
+  
   ::CredFree(creds);
   return true;
 }
