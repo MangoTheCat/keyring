@@ -92,7 +92,7 @@ bool GetInternetPassword(const std::string& servername,
 bool DeleteInternetPassword(const std::string& servername,
 			    const std::string& account,
 			    int port) {
-  return ::CredDelete(servername, CRED_TYPE_GENERIC, 0) == TRUE;
+  return ::CredDelete(servername.c_str(), CRED_TYPE_GENERIC, 0) == TRUE;
 }
 
 bool FindInternetPassword(const std::string& servername,
